@@ -949,8 +949,8 @@ h1, h2, h3, h4 {
 /* Info Strip — secondary */
 .phone-secondary {
   display: block;
-  font-size: 0.82rem;
-  font-weight: 400;
+  font-size: 0.95rem;
+  font-weight: 600;
   color: var(--color-text-muted);
   margin-top: 6px;
   font-family: var(--font-mono);
@@ -974,8 +974,8 @@ h1, h2, h3, h4 {
 
 /* Contact Sidebar — secondary */
 .sidebar-phone-secondary {
-  font-size: 0.85rem;
-  font-weight: 400;
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--color-text-muted);
   font-family: var(--font-mono);
 }
@@ -1030,15 +1030,15 @@ h1, h2, h3, h4 {
 }
 
 .footer-phone-secondary {
-  font-size: 0.88rem;
-  font-weight: 400;
-  color: #7a7880 !important;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #9c9aa0 !important;
   font-family: var(--font-mono);
   letter-spacing: 0.03em;
   transition: color 0.2s ease;
 }
 .footer-phone-secondary:hover {
-  color: #a4a2a6 !important;
+  color: #c8c6cc !important;
 }
 
 
@@ -1610,18 +1610,18 @@ h1, h2, h3, h4 {
   color: #fff;
 }
 
-/* Secondary phone — smaller, faded */
+/* Secondary phone — visible but subordinate */
 .dds-phone-secondary {
   font-family: var(--font-mono);
-  font-size: 0.88rem;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.45);
-  letter-spacing: 0.03em;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.02em;
   transition: color 0.2s ease;
 }
 
 .dds-phone-secondary:hover {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 @media (max-width: 768px) {
