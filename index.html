@@ -96,7 +96,8 @@
             <div class="info-strip-label">Phone Number</div>
             <div class="info-strip-value">
               <a href="tel:240-413-4355" class="phone-primary">240-413-4355</a>
-              <a href="tel:202-937-9323" class="phone-secondary">202-937-9323</a>
+              <span class="phone-primary-badge">Primary</span>
+              <a href="tel:202-937-9323" class="phone-secondary"><span class="phone-secondary-prefix">Alt:</span> 202-937-9323</a>
             </div>
           </div>
           
@@ -356,6 +357,22 @@
       </div>
     </section>
 
+    <!-- DDS Announcement Bar -->
+    <div class="dds-announce-bar">
+      <div class="dds-announce-inner">
+        <div class="dds-announce-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="16" fill="rgba(161,163,15,0.25)"/>
+            <path d="M10 17l4 4 8-9" stroke="#d5d71a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="dds-announce-text">
+          <strong>DDS Eligibility Support Available</strong> — We assist individuals &amp; families in navigating the Department on Disability Services eligibility process.
+        </p>
+        <a href="#dds-eligibility" class="dds-announce-cta">Learn More &darr;</a>
+      </div>
+    </div>
+
     <!-- DDS Eligibility Section -->
     <section id="dds-eligibility" class="dds-section">
       <!-- Overture Banner -->
@@ -496,6 +513,15 @@
             <div class="dds-help-text">
               <h3>We Are Here to Help!</h3>
               <p>Let us walk with you every step of the way to ensure you or your loved one receives the support you deserve.</p>
+              <div class="dds-help-phones">
+                <a href="tel:240-413-4355" class="dds-phone-primary">
+                  <span class="dds-phone-primary-label">Call Now</span>
+                  <span class="dds-phone-primary-num">240-413-4355</span>
+                </a>
+                <a href="tel:202-937-9323" class="dds-phone-secondary">
+                  <span class="dds-phone-secondary-prefix">Alt:</span> 202-937-9323
+                </a>
+              </div>
             </div>
             <a href="#contact" class="btn-pill dds-help-btn">Start Your Journey &rarr;</a>
           </div>
