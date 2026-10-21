@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Messages — Assistic Care Services</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta name="robots" content="noindex, nofollow">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #500658;
+      --primary-light: #7b1685;
+      --accent: #a1a30f;
+      --accent-bright: #d5d71a;
+      --dark: #0f0d10;
+      --surface: #1a1720;
+      --surface-2: #221f28;
+      --border: #2e2a35;
+      --text: #f0eef3;
+      --text-muted: #8a8592;
+      --font-serif: 'Instrument Serif', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--dark);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ---- LOCK SCREEN ---- */
+    #lock-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0a0810 0%, #1a0b1e 50%, #0f0d10 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 24px;
+    }
+
+    .lock-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 56px 48px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    }
+
+    .lock-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px auto;
+      font-size: 1.6rem;
+    }
+
+    .lock-title {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .lock-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      font-family: var(--font-mono);
+    }
+
+    .lock-input {
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--text);
+      letter-spacing: 0.1em;
+      text-align: center;
+      margin-bottom: 16px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      outline: none;
+    }
+
+    .lock-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(80,6,88,0.2);
+    }
+
+    .lock-input.error {
+      border-color: #e05252;
+      box-shadow: 0 0 0 3px rgba(224,82,82,0.15);
+      animation: shake 0.35s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%       { transform: translateX(-8px); }
+      60%       { transform: translateX(8px); }
+      80%       { transform: translateX(-4px); }
+    }
+
+    .lock-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 16px;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .lock-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .lock-error {
+      font-size: 0.82rem;
+      color: #e05252;
+      font-family: var(--font-mono);
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* ---- MAIN APP ---- */
+    #app { display: none; }
+
+    /* ---- HEADER ---- */
+    .app-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .app-header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .app-brand {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+    }
+
+    .app-brand span { color: var(--accent-bright); }
+
+    .app-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-style: italic;
+      color: var(--text);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .btn-sm-ghost {
+      background: transparent;
+      color: var(--text-muted);
+    }
+    .btn-sm-ghost:hover {
+      background: var(--surface-2);
+      color: var(--text);
+      border-color: var(--text-muted);
+    }
+
+    .btn-sm-danger {
+      background: transparent;
+      color: #e05252;
+      border-color: rgba(224,82,82,0.3);
+    }
+    .btn-sm-danger:hover {
+      background: rgba(224,82,82,0.1);
+      border-color: #e05252;
+    }
+
+    /* ---- CONTENT ---- */
+    .app-content {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    /* ---- STATS BAR ---- */
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 40px;
+      padding: 20px 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-num {
+      font-family: var(--font-mono);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 36px;
+      background: var(--border);
+    }
+
+    /* ---- EMPTY STATE ---- */
+    #empty-state {
+      text-align: center;
+      padding: 80px 40px;
+      color: var(--text-muted);
+    }
+
+    #empty-state .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      opacity: 0.4;
+    }
+
+    #empty-state h3 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    #empty-state p {
+      font-size: 0.9rem;
+      font-family: var(--font-mono);
+    }
+
+    /* ---- MESSAGE CARDS ---- */
+    .messages-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .msg-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .msg-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--primary), var(--primary-light));
+      border-radius: 3px 0 0 3px;
+    }
+
+    .msg-card:hover {
+      border-color: rgba(80,6,88,0.5);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    }
+
+    .msg-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .msg-sender {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .msg-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .msg-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .msg-contact {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .msg-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .msg-timestamp {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .msg-appt-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(161,163,15,0.12);
+      border: 1px solid rgba(161,163,15,0.3);
+      color: var(--accent-bright);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 9999px;
+    }
+
+    .msg-divider {
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 16px 0;
+    }
+
+    .msg-body {
+      font-size: 0.97rem;
+      line-height: 1.75;
+      color: rgba(240,238,243,0.8);
+    }
+
+    .msg-footer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--border);
+      flex-wrap: wrap;
+    }
+
+    .msg-detail-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--surface-2);
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .msg-delete-btn {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      color: rgba(224,82,82,0.45);
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      padding: 5px 10px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .msg-delete-btn:hover {
+      background: rgba(224,82,82,0.1);
+      color: #e05252;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      transition: color 0.2s ease;
+    }
+    .back-link:hover { color: var(--text); }
+
+    @media (max-width: 600px) {
+      .app-header  { padding: 16px 20px; flex-wrap: wrap; gap: 12px; }
+      .lock-card   { padding: 40px 24px; }
+      .app-content { padding: 28px 16px; }
+      .msg-card    { padding: 22px 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOCK SCREEN -->
+  <div id="lock-screen">
+    <div class="lock-card">
+      <div class="lock-icon">🔒</div>
+      <h1 class="lock-title">Inbox</h1>
+      <p class="lock-subtitle">Assistic Care Services &middot; Admin</p>
+      <input type="password" id="password-input" class="lock-input" placeholder="Enter password" autocomplete="current-password">
+      <button class="lock-btn" id="unlock-btn">Unlock Inbox</button>
+      <p class="lock-error" id="lock-error">Incorrect password. Please try again.</p>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="app">
+
+    <header class="app-header">
+      <div class="app-header-left">
+        <a href="index.html" class="back-link">&larr; Back to site</a>
+        <span style="color:var(--border)">|</span>
+        <div>
+          <div class="app-brand">Assistic Care <span>Admin</span></div>
+          <div class="app-title">Messages Inbox</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-sm btn-sm-danger" id="clear-all-btn">&#128465; Clear All</button>
+        <button class="btn-sm btn-sm-ghost" id="logout-btn">Lock</button>
+      </div>
+    </header>
+
+    <main class="app-content">
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-num" id="total-count">0</span>
+          <span class="stat-label">Total Messages</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num" id="today-count">0</span>
+          <span class="stat-label">Today</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num" id="latest-date">&mdash;</span>
+          <span class="stat-label">Last Received</span>
+        </div>
+      </div>
+
+      <div id="empty-state" style="display:none;">
+        <div class="empty-icon">&#128205;</div>
+        <h3>No messages yet</h3>
+        <p>Submissions from the contact form will appear here.</p>
+      </div>
+
+      <div class="messages-list" id="messages-list"></div>
+
+    </main>
+  </div>
+
+  <script>
+    const PASSWORD    = 'Assistic';
+    const STORE_KEY   = 'assistic_messages';
+    const SESSION_KEY = 'assistic_unlocked';
+
+    const lockScreen  = document.getElementById('lock-screen');
+    const app         = document.getElementById('app');
+    const passInput   = document.getElementById('password-input');
+    const unlockBtn   = document.getElementById('unlock-btn');
+    const lockError   = document.getElementById('lock-error');
+    const logoutBtn   = document.getElementById('logout-btn');
+    const clearAllBtn = document.getElementById('clear-all-btn');
+    const msgList     = document.getElementById('messages-list');
+    const emptyState  = document.getElementById('empty-state');
+    const totalCount  = document.getElementById('total-count');
+    const todayCount  = document.getElementById('today-count');
+    const latestDate  = document.getElementById('latest-date');
+
+    function unlock() {
+      if (passInput.value === PASSWORD) {
+        sessionStorage.setItem(SESSION_KEY, '1');
+        lockScreen.style.display = 'none';
+        app.style.display = 'block';
+        lockError.style.display = 'none';
+        renderMessages();
+      } else {
+        passInput.classList.add('error');
+        lockError.style.display = 'block';
+        setTimeout(() => passInput.classList.remove('error'), 500);
+        passInput.value = '';
+        passInput.focus();
+      }
+    }
+
+    unlockBtn.addEventListener('click', unlock);
+    passInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem(SESSION_KEY);
+      app.style.display = 'none';
+      lockScreen.style.display = 'flex';
+      passInput.value = '';
+    });
+
+    if (sessionStorage.getItem(SESSION_KEY)) {
+      lockScreen.style.display = 'none';
+      app.style.display = 'block';
+      renderMessages();
+    }
+
+    function getMessages() {
+      return JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
+    }
+
+    function saveMessages(msgs) {
+      localStorage.setItem(STORE_KEY, JSON.stringify(msgs));
+    }
+
+    function formatTimestamp(iso) {
+      const d = new Date(iso);
+      return d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function formatDate(val) {
+      if (!val) return null;
+      const [y, m, d] = val.split('-');
+      return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function formatTime(t) {
+      if (!t) return null;
+      const [h, m] = t.split(':');
+      const d = new Date();
+      d.setHours(+h, +m);
+      return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function isToday(iso) {
+      return new Date(iso).toDateString() === new Date().toDateString();
+    }
+
+    function initials(first, last) {
+      return ((first[0] || '') + (last[0] || '')).toUpperCase();
+    }
+
+    function renderMessages() {
+      const msgs = getMessages();
+      totalCount.textContent = msgs.length;
+      todayCount.textContent = msgs.filter(m => isToday(m.timestamp)).length;
+      latestDate.textContent = msgs.length ? formatTimestamp(msgs[0].timestamp).split(',')[0] : '\u2014';
+
+      msgList.innerHTML = '';
+
+      if (msgs.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+      }
+      emptyState.style.display = 'none';
+
+      msgs.forEach(msg => {
+        const card = document.createElement('div');
+        card.className = 'msg-card';
+        card.dataset.id = msg.id;
+
+        const fmtDate = formatDate(msg.date);
+        const fmtTime = formatTime(msg.time);
+
+        card.innerHTML = `
+          <div class="msg-header">
+            <div class="msg-sender">
+              <div class="msg-avatar">${initials(msg.firstname, msg.lastname)}</div>
+              <div>
+                <div class="msg-name">${msg.firstname} ${msg.lastname}</div>
+                <div class="msg-contact">${msg.email} &middot; ${msg.phone}</div>
+              </div>
+            </div>
+            <div class="msg-meta">
+              <span class="msg-timestamp">${formatTimestamp(msg.timestamp)}</span>
+              ${fmtDate ? `<span class="msg-appt-badge">&#128197; ${fmtDate}</span>` : ''}
+            </div>
+          </div>
+          <hr class="msg-divider">
+          <div class="msg-body">${msg.message.replace(/\n/g, '<br>')}</div>
+          <div class="msg-footer">
+            ${fmtDate ? `<span class="msg-detail-chip">&#128197; ${fmtDate}</span>` : ''}
+            ${fmtTime ? `<span class="msg-detail-chip">&#128336; ${fmtTime}</span>` : ''}
+            <span class="msg-detail-chip">&#128222; ${msg.phone}</span>
+            <button class="msg-delete-btn" data-id="${msg.id}">&times; Delete</button>
+          </div>
+        `;
+
+        msgList.appendChild(card);
+      });
+
+      document.querySelectorAll('.msg-delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const updated = getMessages().filter(m => m.id !== +btn.dataset.id);
+          saveMessages(updated);
+          renderMessages();
+        });
+      });
+    }
+
+    clearAllBtn.addEventListener('click', () => {
+      if (confirm('Delete all messages? This cannot be undone.')) {
+        localStorage.removeItem(STORE_KEY);
+        renderMessages();
+      }
+    });
+  </script>
+
+</body>
+</html>

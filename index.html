@@ -542,42 +542,49 @@
             <span class="tag-mono">GET IN TOUCH</span>
             <h2>Leave us a Message</h2>
             
-            <form method="post" action="">
+            <!-- Success Banner -->
+            <div id="form-success" style="display:none; background: linear-gradient(135deg,#500658,#7b1685); color:#fff; border-radius:12px; padding:28px 32px; margin-bottom:28px; text-align:center;">
+              <div style="font-size:2rem; margin-bottom:8px;">✓</div>
+              <h4 style="font-family:var(--font-serif); font-size:1.4rem; font-weight:400; margin-bottom:6px; color:#fff;">Message Received!</h4>
+              <p style="color:rgba(255,255,255,0.85); font-size:0.95rem;">Thank you for reaching out. We'll be in touch with you shortly.</p>
+            </div>
+
+            <form id="contact-form" method="post" action="">
               <div class="form-row">
                 <div class="form-group">
-                  <input type="text" name="firstname" placeholder="First Name *" required>
+                  <input type="text" id="cf-firstname" name="firstname" placeholder="First Name *" required>
                 </div>
                 <div class="form-group">
-                  <input type="text" name="lastname" placeholder="Last Name *" required>
+                  <input type="text" id="cf-lastname" name="lastname" placeholder="Last Name *" required>
                 </div>
               </div>
               
               <div class="form-row">
                 <div class="form-group">
-                  <input type="email" name="email" placeholder="Email Address *" required>
+                  <input type="email" id="cf-email" name="email" placeholder="Email Address *" required>
                 </div>
                 <div class="form-group">
-                  <input type="tel" name="phone" placeholder="Phone Number *" required>
+                  <input type="tel" id="cf-phone" name="phone" placeholder="Phone Number *" required>
                 </div>
               </div>
               
               <div class="form-row">
                 <div class="form-group">
-                  <input type="date" name="date" required>
+                  <input type="date" id="cf-date" name="date" required>
                 </div>
                 <div class="form-group">
-                  <input type="time" name="time" required>
+                  <input type="time" id="cf-time" name="time" required>
                 </div>
               </div>
               
               <div class="form-row">
                 <div class="form-group full-width">
-                  <textarea name="message" placeholder="Your Message *" required></textarea>
+                  <textarea id="cf-message" name="message" placeholder="Your Message *" required></textarea>
                 </div>
               </div>
               
               <div style="margin-top: 30px;">
-                <button type="submit" class="btn-pill btn-pill-primary" style="width: 100%; border: none;">Submit Now</button>
+                <button type="submit" id="cf-submit" class="btn-pill btn-pill-primary" style="width: 100%; border: none;">Submit Now</button>
               </div>
             </form>
           </div>
@@ -697,6 +704,38 @@
         });
       }
     });
+
+    // ---- Contact Form: Save to localStorage ----
+    const contactForm = document.getElementById('contact-form');
+    const formSuccess = document.getElementById('form-success');
+
+    if (contactForm) {
+      contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const entry = {
+          id: Date.now(),
+          timestamp: new Date().toISOString(),
+          firstname: document.getElementById('cf-firstname').value.trim(),
+          lastname:  document.getElementById('cf-lastname').value.trim(),
+          email:     document.getElementById('cf-email').value.trim(),
+          phone:     document.getElementById('cf-phone').value.trim(),
+          date:      document.getElementById('cf-date').value,
+          time:      document.getElementById('cf-time').value,
+          message:   document.getElementById('cf-message').value.trim()
+        };
+
+        // Load existing messages, append, save back
+        const existing = JSON.parse(localStorage.getItem('assistic_messages') || '[]');
+        existing.unshift(entry); // newest first
+        localStorage.setItem('assistic_messages', JSON.stringify(existing));
+
+        // Show success, hide form
+        contactForm.style.display = 'none';
+        formSuccess.style.display = 'block';
+        contactForm.reset();
+      });
+    }
   </script>
 </body>
 </html>
