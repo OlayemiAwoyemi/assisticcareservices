@@ -705,16 +705,20 @@
       }
     });
 
-    // ---- Contact Form: Save to localStorage ----
+    // ---- Contact Form: Formspree AJAX + localStorage backup ----
     const contactForm = document.getElementById('contact-form');
     const formSuccess = document.getElementById('form-success');
+    const submitBtn   = document.getElementById('cf-submit');
+
+    // !! Replace with your Formspree endpoint after creating the form at formspree.io !!
+    const FORMSPREE_ENDPOINT = 'https://formspree.io/f/REPLACE_WITH_YOUR_FORM_ID';
 
     if (contactForm) {
-      contactForm.addEventListener('submit', function(e) {
+      contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const entry = {
-          id: Date.now(),
+          id:        Date.now(),
           timestamp: new Date().toISOString(),
           firstname: document.getElementById('cf-firstname').value.trim(),
           lastname:  document.getElementById('cf-lastname').value.trim(),
@@ -725,15 +729,50 @@
           message:   document.getElementById('cf-message').value.trim()
         };
 
-        // Load existing messages, append, save back
-        const existing = JSON.parse(localStorage.getItem('assistic_messages') || '[]');
-        existing.unshift(entry); // newest first
-        localStorage.setItem('assistic_messages', JSON.stringify(existing));
+        // Disable button while sending
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
 
-        // Show success, hide form
-        contactForm.style.display = 'none';
-        formSuccess.style.display = 'block';
-        contactForm.reset();
+        try {
+          const response = await fetch(FORMSPREE_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              'First Name':    entry.firstname,
+              'Last Name':     entry.lastname,
+              'Email':         entry.email,
+              'Phone':         entry.phone,
+              'Preferred Date': entry.date,
+              'Preferred Time': entry.time,
+              'Message':       entry.message
+            })
+          });
+
+          if (response.ok) {
+            // Save to localStorage as backup for /messages inbox
+            const existing = JSON.parse(localStorage.getItem('assistic_messages') || '[]');
+            existing.unshift(entry);
+            localStorage.setItem('assistic_messages', JSON.stringify(existing));
+
+            contactForm.style.display = 'none';
+            formSuccess.style.display = 'block';
+            contactForm.reset();
+          } else {
+            const data = await response.json();
+            const errMsg = (data.errors || []).map(err => err.message).join(', ') || 'Submission failed. Please try again.';
+            alert(errMsg);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Now';
+          }
+        } catch (err) {
+          // Network error — still save locally
+          const existing = JSON.parse(localStorage.getItem('assistic_messages') || '[]');
+          existing.unshift(entry);
+          localStorage.setItem('assistic_messages', JSON.stringify(existing));
+          contactForm.style.display = 'none';
+          formSuccess.style.display = 'block';
+          contactForm.reset();
+        }
       });
     }
   </script>
